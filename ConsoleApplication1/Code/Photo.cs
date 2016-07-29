@@ -35,9 +35,14 @@ namespace RenamePhotos.Code
         private Photo()
         { }
 
-        internal string GetFileName(List<Photo> photos)
+        internal string GetFileName(List<Photo> photos, int index)
         {
-            var datePart = photos.Count(x => x.DateString == DateString) == 1 ? DateString : DateStringFull;
+            var isPreviousPhotoHasDifferentDateString = index == 0 || photos[index - 1].DateString != DateString;
+            var isNexPhotoHasDifferentDateString = index == photos.Count - 1 || photos[index + 1].DateString != DateString;
+
+            //var datePart = photos.Count(x => x.DateString == DateString) == 1 ? DateString : DateStringFull;
+            var datePart = isPreviousPhotoHasDifferentDateString && isNexPhotoHasDifferentDateString ? DateString : DateStringFull;
+
             var cameraPart = _cameraMaker != _cameraModel ? $"{_cameraMaker} {_cameraModel}" : _cameraMaker;
             return $"{datePart} ({cameraPart}){_fileExtension}";
         }
@@ -71,6 +76,11 @@ namespace RenamePhotos.Code
         {
             _cameraModel = _shellFile.Properties.System.Photo.CameraModel.Value;
             //CameraModel = GetMetadataProperty(0x0110);
+        }
+
+        internal static List<Photo> Sort(List<Photo> photos)
+        {
+            return photos.OrderBy(x => x.Date).ToList();
         }
 
         //private string GetMetadataProperty(int propertyId)

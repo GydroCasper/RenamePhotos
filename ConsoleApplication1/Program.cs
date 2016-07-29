@@ -28,10 +28,12 @@ namespace RenamePhotos
             var dirPath = $"Переименованные фото_{DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss")}";
             var dir = Directory.CreateDirectory(dirPath);
 
-            foreach(var photo in photos)
+            var sortedPhotos = Photo.Sort(photos);
+            for(var i=0;i<photos.Count;i++)
+            //foreach(var photo in sortedPhotos)
             {
-                System.IO.File.Copy(photo.FilePath, $"{dir.FullName}\\{photo.GetFileName(photos)}", true);
-
+                var currentPhoto = photos[i];
+                System.IO.File.Copy(currentPhoto.FilePath, $"{dir.FullName}\\{currentPhoto.GetFileName(photos, i)}", true);
             }
         }
     }
